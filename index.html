@@ -23,7 +23,7 @@
         var outImage, outH, outW; // 출력 파일, 출력 배열, 출력폭과 높이
         var inPaper, outPaper; // 종이
         var inFile;
-
+        var zoomValue = 1;
         // 함수 선언부
         //////////////////////
         //// 공통 함수부
@@ -499,7 +499,7 @@
         }
         function zoomIn2_image() {
             // (중요!) 출력 영상의 크기를 결정 --> 알고리즘에 따름.
-            var scale = parseInt(prompt("확대배율", "2"));
+            var scale = zoomValue;
             outH = parseInt(inH * scale);
             outW = parseInt(inW * scale);
             // 출력 이미지 메모리 할당.
@@ -517,6 +517,15 @@
             }
             // *******************************
             displayImage();
+        }
+        function zoomInHandler(zoomIn){
+            if(zoomIn===true){
+                zoomValue += 0.5;
+                zoomIn2_image();
+            }else{
+                zoomValue -= 0.5;
+                zoomIn2_image();
+            }
         }
         function bw_image() {
             // (중요!) 출력 영상의 크기를 결정 --> 알고리즘에 따름.
@@ -652,8 +661,8 @@
                 <button title="밝기 변화" type="button" class="btn btn-light"><i class="fas fa-sun"></i></button>
                 <button title="회전" type="button" class="btn btn-light"><i class="fas fa-redo"></i></button>
                 <button title="반전" type="button" class="btn btn-light"><i class="fas fa-adjust"></i></button>
-                <button title="확대" type="button" class="btn btn-light"><i class="fas fa-search-plus"></i></button>
-                <button title="축소" type="button" class="btn btn-light"><i class="fas fa-search-minus"></i></button>
+                <button title="확대" type="button" class="btn btn-light"><i class="fas fa-search-plus" onclick="zoomInHandler(true)"></i></button>
+                <button title="축소" type="button" class="btn btn-light"><i class="fas fa-search-minus" onclick="zoomInHandler(false)"></i></button>
             </div>
             <br>
             <input id="addImage" type="range" onchange="add_image()" value="0" min="-255" max="255">
