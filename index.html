@@ -2,6 +2,20 @@
 <HTML>
 
 <HEAD>
+    <!-- 부트스트랩 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
+
+    <!-- 부트스트랩 JS 및 종속성 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+        integrity="sha512-0Jp/ZFeh6sy0Z6X8Z1gOfU6PxzU6+QyQO1BlCxRlB3JCVcdZ+a2EmZ4b9TuF4I5aL4JH5N5pSITfz+jgaxh7/g=="
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"
+        integrity="sha512-d0l9Z4KjR4J0GAb5g5fD8UKzIO1jH3q+a0JtOZsb9+REcbtJfcOwpKjOYFw8EJJW2QzSmjPXOyJb/hdZPmLl2Q=="
+        crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
     <script lang="javascript">
         // 전역 변수부
         var inCanvas, inCtx, outCanvas, outCtx;
@@ -20,6 +34,7 @@
             outCanvas = document.getElementById("outCanvas"); // 도화지에 접근
             outCtx = outCanvas.getContext('2d'); // 물감, 붓이 들은 통
         }
+
         function openRawImage() {
             inFile = document.getElementById("inFile").files[0]; // Lena256.raw
             // (중요!) 이미지의 폭과 높이를 계산
@@ -45,38 +60,43 @@
                         inImage[i][k] = blob.slice(sPixel, ePixel).charCodeAt(0); // 한점만 썰어내기. '뺇'--> 253
                     }
                 }
-                displayImage();
+                displayImage(true);
             }
 
         }
-        function displayImage() {
-            // 입력 메모리를 종이에 콕콕콕 찍기...
-            inPaper = inCtx.createImageData(inH, inW); // 빈 종이 준비
-            for (var i = 0; i < inH; i++) {
-                for (var k = 0; k < inW; k++) {
-                    var px = inImage[i][k];
-                    inPaper.data[(i * inH + k) * 4 + 0] = px; // R
-                    inPaper.data[(i * inH + k) * 4 + 1] = px; // G
-                    inPaper.data[(i * inH + k) * 4 + 2] = px; // B
-                    inPaper.data[(i * inH + k) * 4 + 3] = 255; // Alpha
-                }
-            }
-            inCtx.putImageData(inPaper, 0, 0); // 종이를 캔버스 왼쪽위에 딱 붙여서 부착.
-            // 출력 메모리를 종이에 콕콕콕 찍기...
-            outCanvas.height = outH;
-            outCanvas.width = outW;
-            outPaper = outCtx.createImageData(outH, outW); // 빈 종이 준비
-            for (var i = 0; i < outH; i++) {
-                for (var k = 0; k < outW; k++) {
-                    var px = outImage[i][k];
-                    outPaper.data[(i * outH + k) * 4 + 0] = px; // R
-                    outPaper.data[(i * outH + k) * 4 + 1] = px; // G
-                    outPaper.data[(i * outH + k) * 4 + 2] = px; // B
-                    outPaper.data[(i * outH + k) * 4 + 3] = 255; // Alpha
-                }
-            }
-            outCtx.putImageData(outPaper, 0, 0); // 종이를 캔버스 왼쪽위에 딱 붙여서 부착.
 
+
+        function displayImage(original=false) {
+            // 입력 메모리를 종이에 콕콕콕 찍기...
+            if (original === true) {
+                inPaper = inCtx.createImageData(inH, inW); // 빈 종이 준비
+                for (var i = 0; i < inH; i++) {
+                    for (var k = 0; k < inW; k++) {
+                        var px = inImage[i][k];
+                        inPaper.data[(i * inH + k) * 4 + 0] = px; // R
+                        inPaper.data[(i * inH + k) * 4 + 1] = px; // G
+                        inPaper.data[(i * inH + k) * 4 + 2] = px; // B
+                        inPaper.data[(i * inH + k) * 4 + 3] = 255; // Alpha
+                    }
+                }
+                inCtx.putImageData(inPaper, 0, 0); // 종이를 캔버스 왼쪽위에 딱 붙여서 부착.
+                // 출력 메모리를 종이에 콕콕콕 찍기...
+            }
+            else {
+                inCanvas.height = outH;
+                inCanvas.width = outW;
+                inPaper = inCtx.createImageData(outH, outW); // 빈 종이 준비
+                for (var i = 0; i < outH; i++) {
+                    for (var k = 0; k < outW; k++) {
+                        var px = outImage[i][k];
+                        inPaper.data[(i * outH + k) * 4 + 0] = px; // R
+                        inPaper.data[(i * outH + k) * 4 + 1] = px; // G
+                        inPaper.data[(i * outH + k) * 4 + 2] = px; // B
+                        inPaper.data[(i * outH + k) * 4 + 3] = 255; // Alpha
+                    }
+                }
+                inCtx.putImageData(inPaper, 0, 0); // 종이를 캔버스 왼쪽위에 딱 붙여서 부착.
+            }
         }
         //////////////////////
         //// *** 영상 처리 함수부
@@ -408,14 +428,14 @@
         }
         function rotate2_image() {
             // (중요!) 출력 영상의 크기를 결정 --> 알고리즘에 따름.
-            outH = inH;
-            outW = inW;
-            // 출력 이미지 메모리 할당.
-            outImage = new Array(outH);
-            for (var i = 0; i < outH; i++)
-                outImage[i] = new Array(outW);
+            // outH = inH;
+            // outW = inW;
+            // // 출력 이미지 메모리 할당.
+            // outImage = new Array(outH);
+            // for (var i = 0; i < outH; i++)
+            //     outImage[i] = new Array(outW);
             // ** 진짜 영상처리 알고리즘 구현 **
-            var angle = parseInt(prompt("각도", "45"));
+            var angle = parseInt(document.getElementById("rotateImage").value);
             angle = angle * Math.PI / 180;
             // 공식
             // new_i = cos*(i-cx) - sin*(k-cy) + cx
@@ -582,7 +602,7 @@
             for (var i = 0; i < outH; i++)
                 outImage[i] = new Array(outW);
             // ** 진짜 영상처리 알고리즘 구현 **
-            var value = parseInt(prompt("값", "50"));
+            var value = parseInt(document.getElementById("addImage").value);
             for (var i = 0; i < inH; i++) {
                 for (var k = 0; k < inW; k++) {
                     if (inImage[i][k] + value < 0)
@@ -593,9 +613,11 @@
                         outImage[i][k] = inImage[i][k] + value;
                 }
             }
+        
             // *******************************
-            displayImage();
+            displayImage(false);
         }
+
         function reverse_image() {
             // (중요!) 출력 영상의 크기를 결정 --> 알고리즘에 따름.
             outH = inH;
@@ -619,13 +641,25 @@
 </HEAD>
 
 <BODY onload="init()">
+    <div style="display: flex; justify-content: center; align-items: center; width: 100%; margin: 0 auto;">
+        <input type="file" id="inFile" onchange="openRawImage()" />
+    </div>
     <div
         style="display: flex; justify-content: center; align-items: center; height: 100vh; max-width: 800px; width: 100%; margin: 0 auto;">
         <div
             style="display: flex; flex-direction: column; align-items: center; background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);">
-
+            <div class="btn-group" role="group">
+                <button title="밝기 변화" type="button" class="btn btn-light"><i class="fas fa-sun"></i></button>
+                <button title="회전" type="button" class="btn btn-light"><i class="fas fa-redo"></i></button>
+                <button title="반전" type="button" class="btn btn-light"><i class="fas fa-adjust"></i></button>
+                <button title="확대" type="button" class="btn btn-light"><i class="fas fa-search-plus"></i></button>
+                <button title="축소" type="button" class="btn btn-light"><i class="fas fa-search-minus"></i></button>
+            </div>
+            <br>
+            <input id="addImage" type="range" onchange="add_image()" value="0" min="-255" max="255">
+            <input id="rotateImage" type="range" onchange="rotate2_image()" value="0" min="-180" max="180">
             <form>
-                <input type="file" id="inFile" onchange="openRawImage()" /><br>
+                <br>
                 <select name="pixel" onchange="selectAlgo(this.form.pixel)">
                     <option value="0"> 선택하세요. </option>
                     <optgroup label="화소점 처리">
@@ -655,15 +689,10 @@
                     </optgroup>
                 </select> <br>
             </form>
-            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
-                <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
-                    <!-- inCanvas 요소는 왼쪽에, outCanvas 요소는 오른쪽에 배치합니다. -->
-                    <canvas id="inCanvas" height=256 width=256
-                        style="background-color: yellow; margin-right: 10px;"></canvas>
-                    <canvas id="outCanvas" height=256 width=256
-                        style="background-color: aqua; margin-left: 10px;"></canvas>
-                </div>
-            </div>
+            <canvas id="inCanvas" height=256 width=256 style="background-color: rgb(255, 255, 255); margin-right: 10px;"></canvas>
+            <canvas style="display:none" id="outCanvas" height=256 width=256
+                style="background-color: aqua; margin-left: 10px;">
+            </canvas>
         </div>
     </div>
 
