@@ -30,6 +30,21 @@
         .canvas-box label {
             margin-bottom: 10px;
         }
+
+        .container {
+            display: flex;
+        }
+
+        #div1 {
+            margin-top: 50px;
+            float: left;
+            width: 30%;
+        }
+
+        #div2 {
+            float: right;
+            width: 70%;
+        }
     </style>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -652,7 +667,7 @@
 <BODY onload="init()">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">자바스크립트를 이용한 이미지 처리 프로젝트</a>
+            <a class="navbar-brand" href="#">자바스크립트를 이용한 이미지 처리</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
                 aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -678,44 +693,76 @@
         </div>
     </nav>
     <form>
-        <input class="form-control" type="file" id="inFile" onchange="openRawImage()" />
-        <select name="pixel" onchange="selectAlgo(this.form.pixel)">
-            <option value="0"> 선택하세요. </option>
-            <optgroup label="화소점 처리">
-                <option value="100"> 동일영상 </option>
-                <option value="101"> 밝게/어둡게 </option>
-                <option value="102"> 반전 </option>
-                <option value="103"> 흑백(127) </option>
-                <option value="104"> 흑백(평균값) </option>
-                <option value="105"> 흑백(중위수) </option>
-            </optgroup>
-            <optgroup label="기하학 처리">
-                <option value="200"> 축소 </option>
-                <option value="201"> 확대 </option>
-                <option value="202"> 확대(백워딩) </option>
-                <option value="210"> 회전 </option>
-                <option value="211"> 회전(중앙,백워딩) </option>
-            </optgroup>
-            <optgroup label="화소영역 처리">
-                <option value="300"> 엠보싱 </option>
-                <option value="301"> 블러링 </option>
-                <option value="302"> 윤곽선 추출 </option>
-            </optgroup>
-            <optgroup label="히스토그램 처리">
-                <option value="400"> 히스토그램 스트래칭 </option>
-                <option value="401"> 엔드-인 탐색 </option>
-                <option value="402"> 평활화 </option>
-            </optgroup>
-        </select> <br>
+        <input class="form-control" type="file" id="inFile" value="RAW 이미지 파일 첨부하기" placeholder="파일을 첨부해주세요."
+            onchange="openRawImage()" />
     </form>
-    <div id="canvas-container">
-        <div class="canvas-box">
-            <label>원본이미지</label>
-            <canvas id="inCanvas" height=256 width=256 style="background-color: yellow"></canvas>
+    <div class="container">
+        <div id="div1">
+            <h5>화소점 처리</h5>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked=""
+                    onclick="equal_image()">
+                <label class="btn btn-outline-primary" for="btnradio1">원본</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" checked=""
+                    onclick="add_image()">
+                <label class="btn btn-outline-primary" for="btnradio2">밝기 조절</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" checked=""
+                    onclick="reverse_image()">
+                <label class="btn btn-outline-primary" for="btnradio3">반전</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio4" autocomplete="off" checked=""
+                    onclick="bw3_image()">
+                <label class="btn btn-outline-primary" for="btnradio4">흑백</label>
+            </div><br /><br />
+            <h5>기하학 처리</h5>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off" checked=""
+                    onclick="zoomIn2_image()">
+                <label class="btn btn-outline-primary" for="btnradio5">확대</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio6" autocomplete="off" checked=""
+                    onclick="zoomOut_image()">
+                <label class="btn btn-outline-primary" for="btnradio6">축소</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio5" autocomplete="off" checked=""
+                    onclick="rotate2_image()">
+                <label class="btn btn-outline-primary" for="btnradio5">회전</label>
+            </div><br /><br />
+            <h5>화소영역 처리</h5>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio7" autocomplete="off" checked=""
+                    onclick="embos_image()">
+                <label class="btn btn-outline-primary" for="btnradio7">엠보싱</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio8" autocomplete="off" checked=""
+                    onclick="blur_image()">
+                <label class="btn btn-outline-primary" for="btnradio8">블러링</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio9" autocomplete="off" checked=""
+                    onclick="edge_image()">
+                <label class="btn btn-outline-primary" for="btnradio9">윤곽선 추출</label>
+            </div></br></br>
+            <h5>히스토그램 처리</h5>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio10" autocomplete="off" checked=""
+                    onclick="histoSt_image()">
+                <label class="btn btn-outline-primary" for="btnradio10">히스토그램 스트레칭</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio11" autocomplete="off" checked=""
+                    onclick="endIn_image()">
+                <label class="btn btn-outline-primary" for="btnradio11">엔드-인 탐색</label>
+                <input type="radio" class="btn-check" name="btnradio" id="btnradio12" autocomplete="off" checked=""
+                    onclick="histoEqual_image()">
+                <label class="btn btn-outline-primary" for="btnradio12">평활화</label>
+            </div>
         </div>
-        <div class="canvas-box">
-            <label>처리된이미지</label>
-            <canvas id="outCanvas" height=256 width=256 style="background-color: aqua"></canvas>
+        <hr style="border: 1px solid #3878c6; margin: 0px;">
+
+        <div id="div2">
+            <div id="canvas-container" style="margin-top: 60px;">
+                <div class="canvas-box">
+                    <label><b>원본이미지</b></label>
+                    <canvas id="inCanvas" height=256 width=256 style="background-color: yellow"></canvas>
+                </div>
+                <div class="canvas-box">
+                    <label><b>처리된이미지</b></label>
+                    <canvas id="outCanvas" height=256 width=256 style="background-color: aqua"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </BODY>
